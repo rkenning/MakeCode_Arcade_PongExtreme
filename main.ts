@@ -1,6 +1,45 @@
+// Initialize player paddle
+let player = sprites.create(img`
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1
+`, SpriteKind.Player)
+player.setPosition(10, 60)
 
-// Import statement for sprites.ts
-import { Sprites } from "./sprites";
+// Initialize AI paddle
+let ai = sprites.create(img`
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1 
+    1 1
+`, SpriteKind.Enemy)
+ai.setPosition(150, 60)
+
+// Initialize ball
+let ball = sprites.create(img`
+    1 1 1 1 1 1 1 1 
+    1 1 1 1 1 1 1 1 
+    1 1 1 1 1 1 1 1 
+    1 1 1 1 1 1 1 1 
+    1 1 1 1 1 1 1 1 
+    1 1 1 1 1 1 1 1 
+    1 1 1 1 1 1 1 1 
+    1 1 1 1 1 1 1 1 
+`, SpriteKind.Projectile)
+ball.setPosition(80, 60)
+ball.setVelocity(50, 50)
+ball.setFlag(SpriteFlag.BounceOnWall, true)
 
 // Initialize pickup (initially null)
 let pickup: Sprite = null
@@ -9,7 +48,7 @@ let pickup: Sprite = null
 game.splash("Game Started!")
 
 // Player paddle movement
-controller.moveSprite(Sprites.player, 0, 100)
+controller.moveSprite(player, 0, 100)
 
 // Event handler for when pickup is touched by a paddle
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, otherSprite: Sprite) {
@@ -20,7 +59,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, o
         // Temporarily replace player or AI paddle image with a larger version
         if (sprite.kind() === SpriteKind.Player) {
             // Player paddle
-            Sprites.player.setImage(img`
+            player.setImage(img`
                 1 1 1 1 1 1 1 1 
                 1 1 1 1 1 1 1 1 
                 1 1 1 1 1 1 1 1 
@@ -32,7 +71,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, o
             `)
         } else if (sprite.kind() === SpriteKind.Enemy) {
             // AI paddle
-            Sprites.ai.setImage(img`
+            ai.setImage(img`
                 1 1 1 1 1 1 1 1 
                 1 1 1 1 1 1 1 1 
                 1 1 1 1 1 1 1 1 
@@ -55,7 +94,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, o
         // Revert to the original image
         if (sprite.kind() === SpriteKind.Player) {
             // Player paddle
-            Sprites.player.setImage(img`
+            player.setImage(img`
                 1 1 
                 1 1 
                 1 1 
@@ -68,7 +107,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, o
             `)
         } else if (sprite.kind() === SpriteKind.Enemy) {
             // AI paddle
-            Sprites.ai.setImage(img`
+            ai.setImage(img`
                 1 1 
                 1 1 
                 1 1 
@@ -87,7 +126,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, o
 let lastSpawnTime = game.runtime()
 game.onUpdate(function () {
     // Check if 60 seconds have passed since the last spawn
-    if (game.runtime() - lastSpawnTime > 10000) {
+    if (game.runtime() - lastSpawnTime > 60000) {
         // Spawn a pickup at a random position within the game screen
         let x = Math.randomRange(10, 150)
         let y = Math.randomRange(10, 110)
@@ -117,28 +156,28 @@ game.onUpdate(function () {
     }
 
     // AI paddle follows the ball
-    Sprites.ai.y = Sprites.ball.y
+    ai.y = ball.y
 
     // Ball collision with player paddle
-    if (Sprites.ball.overlapsWith(Sprites.player)) {
-        Sprites.ball.vx = Sprites.ball.vx * -1
+    if (ball.overlapsWith(player)) {
+        ball.vx = ball.vx * -1
     }
 
     // Ball collision with AI paddle
-    if (Sprites.ball.overlapsWith(Sprites.ai)) {
-        Sprites.ball.vx = Sprites.ball.vx * -1
+    if (ball.overlapsWith(ai)) {
+        ball.vx = ball.vx * -1
     }
 
     // Check for scoring
-    if (Sprites.ball.x <= 0) {
+    if (ball.x <= 0) {
         // AI scores
         info.changeScoreBy(1)
-        Sprites.ball.setPosition(80, 60)
-        Sprites.ball.setVelocity(50, 50)
-    } else if (Sprites.ball.x >= 160) {
+        ball.setPosition(80, 60)
+        ball.setVelocity(50, 50)
+    } else if (ball.x >= 160) {
         // Player scores
         info.changeScoreBy(-1)
-        Sprites.ball.setPosition(80, 60)
-        Sprites.ball.setVelocity(-50, -50)
+        ball.setPosition(80, 60)
+        ball.setVelocity(-50, -50)
     }
 })
