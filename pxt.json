@@ -1,0 +1,14 @@
+{
+    "name": "PongX",
+    "version": "0.0.0",
+    "files": [
+        "main.ts"
+    ],
+    "supportedTargets": [
+        "arcade"
+    ],
+    "dependencies": {
+        "device": "*"
+    },
+    "testDependencies": {}
+}
