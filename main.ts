@@ -126,7 +126,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, o
 let lastSpawnTime = game.runtime()
 game.onUpdate(function () {
     // Check if 60 seconds have passed since the last spawn
-    if (game.runtime() - lastSpawnTime > 60000) {
+    if (game.runtime() - lastSpawnTime > 10000) {
         // Spawn a pickup at a random position within the game screen
         let x = Math.randomRange(10, 150)
         let y = Math.randomRange(10, 110)
