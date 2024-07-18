@@ -1,48 +1,39 @@
+// Function to stretch the sprite
+function stretchSprite(sprite: Sprite, newWidth: number, newHeight: number) {
+    // Create a new image with the desired dimensions
+    let stretchedImage = image.create(newWidth, newHeight);
+    
+    // Copy the original image into the new image, stretching it
+    for (let x = 0; x < newWidth; x++) {
+        for (let y = 0; y < newHeight; y++) {
+            // Map the new coordinates to the original image coordinates
+            let origX = Math.floor(x * sprite.image.width / newWidth);
+            let origY = Math.floor(y * sprite.image.height / newHeight);
+            // Set the pixel color in the new image based on the original image
+            stretchedImage.setPixel(x, y, sprite.image.getPixel(origX, origY));
+        }
+    }
+
+    // Set the sprite's image to the stretched image
+    sprite.setImage(stretchedImage);
+}
+
+
+
+
 // Initialize player paddle
-let player = sprites.create(img`
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1
-`, SpriteKind.Player)
+let player = sprites.create(assets.image`PlayerPaddle`, SpriteKind.Player)
 player.setPosition(10, 60)
 
 // Initialize AI paddle
-let ai = sprites.create(img`
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1 
-    1 1
-`, SpriteKind.Enemy)
+let ai = sprites.create(assets.image`AiPaddle`, SpriteKind.Enemy)
 ai.setPosition(150, 60)
 
-// Initialize ball
-let ball = sprites.create(img`
-    1 1 1 1 1 1 1 1 
-    1 1 1 1 1 1 1 1 
-    1 1 1 1 1 1 1 1 
-    1 1 1 1 1 1 1 1 
-    1 1 1 1 1 1 1 1 
-    1 1 1 1 1 1 1 1 
-    1 1 1 1 1 1 1 1 
-    1 1 1 1 1 1 1 1 
-`, SpriteKind.Projectile)
+let ball = sprites.create(assets.image`Ball`, SpriteKind.Projectile)
 ball.setPosition(80, 60)
 ball.setVelocity(50, 50)
 ball.setFlag(SpriteFlag.BounceOnWall, true)
 
-// Initialize pickup (initially null)
-let pickup: Sprite = null
 
 // Debug message to confirm game start
 game.splash("Game Started!")
@@ -50,106 +41,57 @@ game.splash("Game Started!")
 // Player paddle movement
 controller.moveSprite(player, 0, 100)
 
-// Event handler for when pickup is touched by a paddle
+// Event handler for when PowerUpBat is touched by a paddle
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function(sprite: Sprite, otherSprite: Sprite) {
-    if (otherSprite === pickup) {
-        // Hide the pickup
+    if (otherSprite === PowerUpBat) {
+        // Hide the PowerUpBat
         otherSprite.destroy()
 
-        // Temporarily replace player or AI paddle image with a larger version
-        if (sprite.kind() === SpriteKind.Player) {
-            // Player paddle
-            player.setImage(img`
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-            `)
-        } else if (sprite.kind() === SpriteKind.Enemy) {
-            // AI paddle
-            ai.setImage(img`
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-                1 1 1 1 1 1 1 1 
-            `)
-        }
+        stretchSprite(player, player.image.width, player.image.height * 2);
 
         // Flash red for 3 seconds
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 12; i++) {
             sprite.setFlag(SpriteFlag.Invisible, true)
-            pause(250)
+            pause(150)
             sprite.setFlag(SpriteFlag.Invisible, false)
-            pause(250)
+            pause(350)
         }
 
-        // Revert to the original image
-        if (sprite.kind() === SpriteKind.Player) {
-            // Player paddle
-            player.setImage(img`
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1
-            `)
-        } else if (sprite.kind() === SpriteKind.Enemy) {
-            // AI paddle
-            ai.setImage(img`
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1 
-                1 1
-            `)
-        }
+        stretchSprite(player, player.image.width, player.image.height * 2);
+
+        player.setImage(assets.image`PlayerPaddle`)
+
     }
 })
+
+
+//Set up powerup animation and initialise sprite as hidden
+let PowerUpBadAnimation = assets.animation('PowerUpBat') 
+let PowerUpBat = sprites.create(img`.`, SpriteKind.Food);
+PowerUpBat.setFlag(SpriteFlag.Invisible,true)
+
+
 
 // Game loop
 let lastSpawnTime = game.runtime()
 game.onUpdate(function () {
     // Check if 60 seconds have passed since the last spawn
     if (game.runtime() - lastSpawnTime > 10000) {
-        // Spawn a pickup at a random position within the game screen
+        // Spawn a PowerUpBat at a random position within the game screen
         let x = Math.randomRange(10, 150)
         let y = Math.randomRange(10, 110)
         
-        // Destroy previous pickup if it exists
-        if (pickup) {
-            pickup.destroy()
+        // Destroy previous PowerUpBat if it exists
+        if (PowerUpBat) {
+            PowerUpBat.destroy()
         }
         
-        // Create new pickup
-        pickup = sprites.create(img`
-            1 1 1 1 1 1 1 1 
-            1 1 1 1 1 1 1 1 
-            1 1 1 2 2 1 1 1 
-            1 1 1 2 2 1 1 1 
-            1 1 1 1 1 1 1 1 
-            1 1 1 1 1 1 1 1 
-            1 1 1 1 1 1 1 1 
-            1 1 1 1 1 1 1 1 
-        `, SpriteKind.Food)
-        pickup.setPosition(x, y)
-        pickup.setVelocity(30, 30)
-        pickup.setFlag(SpriteFlag.BounceOnWall, true)
+        // Create new PowerUpBat
+        PowerUpBat = sprites.create(img`.`, SpriteKind.Food);
+        //PowerUpBat = sprites.create(assets.animation('PowerUpBat') , SpriteKind.Food)
+        PowerUpBat.setPosition(x, y)
+        PowerUpBat.setVelocity(30, 30)
+        PowerUpBat.setFlag(SpriteFlag.BounceOnWall, true)
         
         // Update the last spawn time to the current time
         lastSpawnTime = game.runtime()
@@ -180,4 +122,17 @@ game.onUpdate(function () {
         ball.setPosition(80, 60)
         ball.setVelocity(-50, -50)
     }
+
+
+
+    // Run animations
+    // Run the animation on the food sprite
+     animation.runImageAnimation(
+         PowerUpBat,
+         assets.animation`PowerUpBat`,
+         100,
+         true
+     );
+
+
 })
