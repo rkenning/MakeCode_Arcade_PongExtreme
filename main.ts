@@ -71,6 +71,10 @@
             lastSpawnTime = game.runtime()
         }
 
+        //PowerUp.WriteAllPowerUps();
+        console.log("Logging");
+
+
         // AI paddle follows the ball
         ai.y = ball.y
 
