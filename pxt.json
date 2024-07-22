@@ -4,7 +4,8 @@
     "files": [
         "images.g.jres",
         "images.g.ts",
-        "main.ts"
+        "main.ts",
+        "powerup.ts"
     ],
     "supportedTargets": [
         "arcade"
