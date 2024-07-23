@@ -5,7 +5,8 @@
         "images.g.jres",
         "images.g.ts",
         "main.ts",
-        "powerup.ts"
+        "powerup.ts",
+        "events.ts"
     ],
     "supportedTargets": [
         "arcade"

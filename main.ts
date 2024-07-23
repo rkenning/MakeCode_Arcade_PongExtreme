@@ -1,39 +1,7 @@
- // Rest of the code...
-//namespace GameUtilities {
-/*
-
-    function stretchSprite(sprite: Sprite, newWidth: number, newHeight: number) {
-        let stretchedImage = image.create(newWidth, newHeight);
-        for (let x = 0; x < newWidth; x++) {
-            for (let y = 0; y < newHeight; y++) {
-                let origX = Math.floor(x * sprite.image.width / newWidth);
-                let origY = Math.floor(y * sprite.image.height / newHeight);
-                stretchedImage.setPixel(x, y, sprite.image.getPixel(origX, origY));
-            }
-        }
-        sprite.setImage(stretchedImage);
-    }
+ 
 
 
-    // Placeholder for adjusting ball speed
-    function adjustBallSpeed(ball: Sprite, speedMultiplier: number) {
-        // Implementation depends on your game's logic for ball movement
-        // This could involve adjusting a speed variable or directly manipulating movement vectors
-    
-    }
-
-
-
-    // Placeholder for adjusting bat speed
-    // Placeholder for adjusting bat speed
-    function adjustBatSpeed(bat: Sprite, speedMultiplier: number) {
-        // Similar to adjustBallSpeed, implement based on how bat movement is controlled
-    }
-
-//}
-
-*/
-//import { PongNamespace } from "./PowerUp";
+    let ballvelocity = 20
 
 
 
@@ -47,17 +15,14 @@
 
     let ball = sprites.create(assets.image`Ball`, SpriteKind.Projectile)
     ball.setPosition(80, 60)
-    ball.setVelocity(50, 50)
+    ball.setVelocity(ballvelocity, ballvelocity)
+    
     ball.setFlag(SpriteFlag.BounceOnWall, true)
 
     //game.splash("Game Started!")
 
     controller.moveSprite(player, 0, 100)
 
-    // Function to handle power-up effects
-    /*function handlePowerUp(powerUp: PowerUp, player: Sprite, ball: Sprite) {
-            console.log(powerUp.toString());
-        } */
 
 
 
@@ -68,14 +33,31 @@ let lastSpawnTime = game.runtime()
     game.onUpdate(function () {
         // Check if 60 seconds have passed since the last spawn
         if (game.runtime() - lastSpawnTime > 5000) {
-            PowerUp.spawnPowerUp();
+            PowerUpNameSpace.spawnPowerUp();
+            //PowerUpNameSpace.WriteAllPowerUps();
             lastSpawnTime = game.runtime()
-
+            
         }
 
 
-        // AI paddle follows the ball
-        ai.y = ball.y
+    // Define maximum speed for AI paddle movement
+    let maxSpeed = 1; // Adjust this value as needed
+
+    // Calculate the difference in y position between the ball and the AI paddle
+    let deltaY = ball.y - ai.y;
+
+    // Limit the deltaY to the maxSpeed to avoid moving too fast
+    if (deltaY > maxSpeed) {
+        deltaY = maxSpeed;
+    } else if (deltaY < -maxSpeed) {
+        deltaY = -maxSpeed;
+    }
+
+    // Update the AI paddle's position
+    ai.y += deltaY;
+
+        
+        
 
         // Ball collision with player paddle
         if (ball.overlapsWith(player)) {
@@ -88,13 +70,25 @@ let lastSpawnTime = game.runtime()
         }
 
         // Check for scoring
-        if (ball.x <= 0) {
-            info.changeScoreBy(1)
+        if (ball.x <= 1) {
+            info.changeScoreBy(-1)
             ball.setPosition(80, 60)
             ball.setVelocity(50, 50)
         } else if (ball.x >= 160) {
-            info.changeScoreBy(-1)
+            info.changeScoreBy(1)
             ball.setPosition(80, 60)
             ball.setVelocity(-50, -50)
         }
+   
+   
+   
+       // Add the score check here
+        if (info.score() < -5) {
+            game.over(false, effects.dissolve) // Use an appropriate effect
+        }
+        if (info.score() > 5) {
+            game.over(true, effects.confetti) // Use an appropriate effect
+        }
+   
+   
     })
