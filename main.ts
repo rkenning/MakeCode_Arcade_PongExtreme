@@ -50,7 +50,7 @@
     ball.setVelocity(50, 50)
     ball.setFlag(SpriteFlag.BounceOnWall, true)
 
-    game.splash("Game Started!")
+    //game.splash("Game Started!")
 
     controller.moveSprite(player, 0, 100)
 
@@ -63,16 +63,15 @@
 
 
     // Game loop
-    let lastSpawnTime = game.runtime()
+let lastSpawnTime = game.runtime()
+    
     game.onUpdate(function () {
         // Check if 60 seconds have passed since the last spawn
         if (game.runtime() - lastSpawnTime > 5000) {
             PowerUp.spawnPowerUp();
             lastSpawnTime = game.runtime()
-        }
 
-        //PowerUp.WriteAllPowerUps();
-        console.log("Logging");
+        }
 
 
         // AI paddle follows the ball
