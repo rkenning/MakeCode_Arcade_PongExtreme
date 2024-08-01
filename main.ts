@@ -23,22 +23,21 @@
 
     controller.moveSprite(player, 0, 100)
 
+    let screenoffset = 10
+    let screenheight = screen.height + screenoffset
+
+    let lastSpawnTime = game.runtime()
+
+    // Initialize lives
+    info.setLife(5)
 
 
-
-
-    // Game loop
-let lastSpawnTime = game.runtime()
-    
-    game.onUpdate(function () {
-        // Check if 60 seconds have passed since the last spawn
-        if (game.runtime() - lastSpawnTime > 5000) {
-            PowerUpNameSpace.spawnPowerUp();
-            //PowerUpNameSpace.WriteAllPowerUps();
-            lastSpawnTime = game.runtime()
-            
-        }
-
+game.onUpdate(function () {
+    // Check if 60 seconds have passed since the last spawn
+    if (game.runtime() - lastSpawnTime > 5000) {
+        PowerUpNameSpace.spawnPowerUp();
+        lastSpawnTime = game.runtime();
+    }
 
     // Define maximum speed for AI paddle movement
     let maxSpeed = 1; // Adjust this value as needed
@@ -56,39 +55,55 @@ let lastSpawnTime = game.runtime()
     // Update the AI paddle's position
     ai.y += deltaY;
 
-        
-        
 
-        // Ball collision with player paddle
-        if (ball.overlapsWith(player)) {
-            ball.vx = ball.vx * -1
-        }
+    // Limit AI paddle to the top and bottom of the screen
+    if (ai.y < 0) {
+        ai.y = 0;
+    } else if (ai.y > screenheight - ai.height) {
+        ai.y = screenheight - ai.height;
+    }
 
-        // Ball collision with AI paddle
-        if (ball.overlapsWith(ai)) {
-            ball.vx = ball.vx * -1
-        }
+    // Limit player paddle to the top and bottom of the screen
+    
+    if (player.y < 0) {
+        player.y = 0;
+  } else if (player.y > screenheight - player.height) {
+        player.y = screenheight - player.height;
+    }
 
-        // Check for scoring
-        if (ball.x <= 1) {
-            info.changeScoreBy(-1)
-            ball.setPosition(80, 60)
-            ball.setVelocity(50, 50)
-        } else if (ball.x >= 160) {
-            info.changeScoreBy(1)
-            ball.setPosition(80, 60)
-            ball.setVelocity(-50, -50)
-        }
-   
-   
-   
-       // Add the score check here
-        if (info.score() < -5) {
-            game.over(false, effects.dissolve) // Use an appropriate effect
-        }
-        if (info.score() > 5) {
-            game.over(true, effects.confetti) // Use an appropriate effect
-        }
-   
-   
-    })
+    // Ball collision with player paddle
+    if (ball.overlapsWith(player)) {
+        console.log("Ball Overlaps with Player")
+        ball.vx = ball.vx * -1;
+    }
+
+    // Ball collision with AI paddle
+    if (ball.overlapsWith(ai)) {
+        console.log("Ball Overlaps with AI")
+        ball.vx = ball.vx * -1;
+    }
+
+    // Check for scoring
+    if (ball.x <= 1) {
+        info.changeLifeBy(-1);
+        ball.setPosition(80, 60);
+        ball.setVelocity(50, 50);
+    } else if (ball.x >= 160) {
+        info.changeScoreBy(1);
+        ball.setPosition(80, 60);
+        ball.setVelocity(-50, -50);
+    }
+
+    // Add the score check here
+    if (info.score() > 5) {
+        game.over(true, effects.confetti); // Use an appropriate effect
+    }
+
+    // Check for game over based on lives
+    if (info.life() <= 0) {
+        game.over(false, effects.dissolve); // Use an appropriate effect
+    }
+});    // Game loop
+
+    
+ 

@@ -111,7 +111,7 @@ namespace PowerUpNameSpace
         export function processPowerup(sourcesprite: Sprite, powerup: Sprite) {
             
             //Console log the type of both sprites
-            console.log("Source Sprite Kind: " + sourcesprite.kind() + " PowerUp Sprite Kind: " + powerup.kind());
+            console.log("Source Sprite Kind (P): " + sourcesprite.kind() + " PowerUp Sprite Kind: " + powerup.kind());
 
             //Check if the sprite is a player or enemy
             if (sourcesprite.kind() == SpriteKind.Player) {
