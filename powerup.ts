@@ -26,6 +26,8 @@ namespace PowerUpNameSpace
         PowerUpBatLength,
         PowerUpBatSpeed,
         PowerUpBallSpeed,
+        PowerUpNewBall,
+        Projectile
         
     }
 
@@ -73,7 +75,7 @@ namespace PowerUpNameSpace
     export function spawnPowerUp() {
         // Add opening curly brace here
         // select a random power-up kind
-        let randomPowerUp = Math.randomRange(0, 2);
+        let randomPowerUp = Math.randomRange(0, 3);
         let img: Image; // Placeholder for the image associated with the power-up
         let ani: Image[] // Placeholder for the animation associated with the power-
         let type: SpriteKind; // Placeholder for the power-up type
@@ -96,6 +98,12 @@ namespace PowerUpNameSpace
                 ani = assets.animation`PowerUpBallSpeedAnim`,
                     type = SpriteKind.PowerUpBallSpeed; // Replace `Type3` with the actual enum value
                 break;
+            case 3:
+                img = assets.image`PowerUpNewBall`; // Replace `PowerUpImage3` with the actual image name
+                ani = assets.animation`PowerUpNewBallAnim`,
+                    type = SpriteKind.PowerUpNewBall; // Replace `Type3` with the actual enum value
+                break;
+
             default:
                 img = assets.image`PowerUpBatLength`; // Replace `PowerUpImage1` with the actual image name
                 ani = assets.animation`PowerUpBatSizeAnim`,
@@ -140,6 +148,7 @@ namespace PowerUpNameSpace
                     break;
                 case SpriteKind.PowerUpBallSpeed:
                     ball.setVelocity( ball.vx*1.2,  ball.vy*1.2);
+                    console.log("Ball Speed : " + ball.vx + " " + ball.vy);
                     break;
                 default:
                     break;
@@ -151,8 +160,14 @@ namespace PowerUpNameSpace
         }
 
     //Method to adjust the ball speed
+
+
+
+// Function to spawn an additional ball
+export function spawnAdditionalBall() {
+    let ball = sprites.create(assets.image`Ball`, SpriteKind.Projectile)
+    ball.setPosition(80, 60)
+    ball.setVelocity(50, 50)
+    ball.setFlag(SpriteFlag.BounceOnWall, true)
 }
-
-
-
-
+}

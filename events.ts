@@ -39,3 +39,13 @@ sprites.onOverlap(SpriteKind.Enemy, PowerUpNameSpace.SpriteKind.PowerUpBallSpeed
 });
 
 
+// Handle collision between player and power-up
+sprites.onOverlap(SpriteKind.Player, PowerUpNameSpace.SpriteKind.PowerUpNewBall, function (sprite: Sprite, otherSprite: Sprite) {
+    otherSprite.destroy()
+    PowerUpNameSpace.spawnAdditionalBall()
+})
+// Handle collision between player and power-up
+sprites.onOverlap(SpriteKind.Enemy, PowerUpNameSpace.SpriteKind.PowerUpNewBall, function (sprite: Sprite, otherSprite: Sprite) {
+    otherSprite.destroy()
+    PowerUpNameSpace.spawnAdditionalBall()
+})

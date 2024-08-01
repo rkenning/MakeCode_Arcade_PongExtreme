@@ -34,7 +34,7 @@
 
 game.onUpdate(function () {
     // Check if 60 seconds have passed since the last spawn
-    if (game.runtime() - lastSpawnTime > 5000) {
+    if (game.runtime() - lastSpawnTime > 500) {
         PowerUpNameSpace.spawnPowerUp();
         lastSpawnTime = game.runtime();
     }
@@ -95,7 +95,7 @@ game.onUpdate(function () {
     }
 
     // Add the score check here
-    if (info.score() > 5) {
+    if (info.score() > 100) {
         game.over(true, effects.confetti); // Use an appropriate effect
     }
 
