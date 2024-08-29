@@ -34,7 +34,7 @@
 
 game.onUpdate(function () {
     // Check if 60 seconds have passed since the last spawn
-    if (game.runtime() - lastSpawnTime > 500) {
+    if (game.runtime() - lastSpawnTime > 5500) {
         PowerUpNameSpace.spawnPowerUp();
         lastSpawnTime = game.runtime();
     }
